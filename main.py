@@ -104,6 +104,8 @@ def sprzedaz():
         manager.magazyn[product_name][1] -= quantity
         manager.actions.append(("sprzedaz", product_name, price, quantity))
         print("Sprzedaz wykonana")
+        if manager.magazyn[product_name][1] == 0:
+            del manager.magazyn[product_name]
 
 
 @manager.assign_command("zakup")
@@ -111,8 +113,7 @@ def zakup():
     product_name = input("Wprowadz nazwe produktu: ")
     price = int(input("Wprowadz cene: "))
     while True:
-        quantity_input = input("Wprowadz ilosc (lub zostaw puste aby "
-                               "anulować): ")
+        quantity_input = input("Wprowadz ilosc (lub zostaw puste aby anulować): ")
         if not quantity_input:
             break
         try:
@@ -125,10 +126,11 @@ def zakup():
                 else:
                     manager.magazyn[product_name][1] += quantity
                     manager.account -= price * quantity
-                    manager.actions.append(("zakup", product_name, price,
-                                            quantity))
+                    manager.actions.append(("zakup", product_name, price, quantity))
                     print("Zakup wykonany")
-                    break
+                if manager.magazyn[product_name][1] == 0:
+                    del manager.magazyn[product_name]
+                break
         except ValueError:
             print("Nieprawidłowa ilość")
 
