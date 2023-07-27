@@ -18,20 +18,22 @@ class Manager:
 
     def execute_command(self, name):
         while True:
-            print("Dostepne opcje:")
-            for command in self.commands.keys():
-                print(command)
-            command = input("Wybierz opcje: ")
-            if command == "koniec":
-                if self.exit_flag:
-                    break
-                else:
-                    self.exit_flag = True
-            if command in self.commands:
-                self.commands[command]()
+            if name in self.commands:
+                self.commands[name]()
+                if not self.exit_flag:
+                    print()
+                    print("Dostepne opcje:")
+                    for command in self.commands.keys():
+                        print(command)
+            elif name == "koniec":
+                self.exit_flag = True
+                break
             else:
                 print("Nieznana komenda")
             print()
+            if self.exit_flag:
+                break
+            name = input("Wybierz opcje: ")
 
 
 def load_data(manager):
@@ -79,7 +81,16 @@ manager = Manager(load_data, Manager.assign_command)
 
 @manager.assign_command("saldo")
 def saldo():
-    amount = float(input("Wprowadz kwote: "))
+    while True:
+        amount_input = input("Wprowadz kwote: ")
+        if amount_input:
+            try:
+                amount = float(amount_input)
+                break
+            except ValueError:
+                print("Nieprawidłowa wartość")
+        else:
+            print("Wprowadź wartość")
     if amount < 0 and abs(amount) > manager.account:
         print("Nie można odjąć więcej niż jest na koncie")
     else:
@@ -90,9 +101,31 @@ def saldo():
 
 @manager.assign_command("sprzedaz")
 def sprzedaz():
-    product_name = input("Wprowadz nazwe produktu: ")
-    price = int(input("Wprowadz cene: "))
-    quantity = int(input("Wprowadz ilosc: "))
+    while True:
+        product_name = input("Wprowadz nazwe produktu: ")
+        if product_name:
+            break
+        print("Nieprawidłowa nazwa produktu")
+    while True:
+        price_input = input("Wprowadz cene: ")
+        if price_input:
+            try:
+                price = int(price_input)
+                break
+            except ValueError:
+                print("Nieprawidłowa cena")
+        else:
+            print("Nieprawidłowa cena")
+    while True:
+        quantity_input = input("Wprowadz ilosc: ")
+        if quantity_input:
+            try:
+                quantity = int(quantity_input)
+                break
+            except ValueError:
+                print("Nieprawidłowa ilość")
+        else:
+            print("Nieprawidłowa ilość")
     if product_name not in manager.magazyn:
         print("Brak produktu w magazynie")
     elif price <= 0 or quantity <= 0:
@@ -110,11 +143,25 @@ def sprzedaz():
 
 @manager.assign_command("zakup")
 def zakup():
-    product_name = input("Wprowadz nazwe produktu: ")
-    price = int(input("Wprowadz cene: "))
+    while True:
+        product_name = input("Wprowadz nazwe produktu: ")
+        if product_name:
+            break
+        print("Nieprawidłowa nazwa produktu")
+    while True:
+        price_input = input("Wprowadz cene: ")
+        if price_input:
+            try:
+                price = int(price_input)
+                break
+            except ValueError:
+                print("Nieprawidłowa cena")
+        else:
+            print("Nieprawidłowa cena")
     while True:
         quantity_input = input("Wprowadz ilosc (lub zostaw puste aby anulować): ")
         if not quantity_input:
+            print("Nieprawidłowa ilość")
             break
         try:
             quantity = int(quantity_input)
@@ -133,6 +180,7 @@ def zakup():
                 break
         except ValueError:
             print("Nieprawidłowa ilość")
+            break
 
 
 @manager.assign_command("konto")
